@@ -1,0 +1,361 @@
+{
+  "meta": {
+    "name": "Daily Reflection Tree",
+    "version": "1.1.0",
+    "author": "Data Science Candidate",
+    "axes": ["Locus (Victim vs Victor)", "Orientation (Entitlement vs Contribution)", "Radius (Self-Centrism vs Altrocentrism)"],
+    "description": "A deterministic end-of-day reflection tool that walks an employee through three psychological axes to surface self-awareness, contribution, and wider perspective.",
+    "routing": "All routing is target-based. parentId is kept only for documentary purposes and should not be used for traversal."
+  },
+  "nodes": [
+    {
+      "id": "START",
+      "parentId": null,
+      "type": "start",
+      "text": "Good evening. Take a breath. Let's look at your day — not to grade it, just to see it clearly.",
+      "options": [],
+      "target": "A1_OPEN",
+      "signal": null
+    },
+    {
+      "id": "A1_OPEN",
+      "parentId": "START",
+      "type": "question",
+      "text": "If today were a chapter in a book, what would its title be?",
+      "options": ["The Day I Held It Together","The Day Things Fell Apart","Just Another Day","The Day I Surprised Myself"],
+      "target": "A1_D1",
+      "signal": null
+    },
+    {
+      "id": "A1_D1",
+      "parentId": "A1_OPEN",
+      "type": "decision",
+      "text": null,
+      "options": [
+        "answer=The Day I Held It Together|The Day I Surprised Myself:A1_Q_AGENCY_HIGH",
+        "answer=The Day Things Fell Apart|Just Another Day:A1_Q_AGENCY_LOW"
+      ],
+      "target": null,
+      "signal": null
+    },
+    {
+      "id": "A1_Q_AGENCY_HIGH",
+      "parentId": "A1_D1",
+      "type": "question",
+      "text": "When something worked today, what's the honest reason it worked?",
+      "options": ["I'd prepared for it or thought it through","I adjusted when it wasn't going well","Someone else made it happen","It just happened to go well"],
+      "target": "A1_D2_HIGH",
+      "signal": "axis1:internal"
+    },
+    {
+      "id": "A1_Q_AGENCY_LOW",
+      "parentId": "A1_D1",
+      "type": "question",
+      "text": "When something didn't go as planned today, what was your first instinct?",
+      "options": ["Figure out what I still had control over","Wait to see what others would do","Feel frustrated by the situation","Push through on my own, even without a clear plan"],
+      "target": "A1_D2_LOW",
+      "signal": "axis1:external"
+    },
+    {
+      "id": "A1_D2_HIGH",
+      "parentId": "A1_Q_AGENCY_HIGH",
+      "type": "decision",
+      "text": null,
+      "options": [
+        "answer=I'd prepared for it or thought it through|I adjusted when it wasn't going well:A1_Q2_INT",
+        "answer=Someone else made it happen|It just happened to go well:A1_Q2_EXT"
+      ],
+      "target": null,
+      "signal": null
+    },
+    {
+      "id": "A1_D2_LOW",
+      "parentId": "A1_Q_AGENCY_LOW",
+      "type": "decision",
+      "text": null,
+      "options": [
+        "answer=Figure out what I still had control over|Push through on my own, even without a clear plan:A1_Q2_INT",
+        "answer=Wait to see what others would do|Feel frustrated by the situation:A1_Q2_EXT"
+      ],
+      "target": null,
+      "signal": null
+    },
+    {
+      "id": "A1_Q2_INT",
+      "parentId": null,
+      "type": "question",
+      "text": "Think of one moment today where something wasn't ideal. Did you see a choice you had — even a small one?",
+      "options": ["Yes — and I took it","Yes — but I didn't act on it","I wasn't looking for one","I'm not sure"],
+      "target": "A1_D3",
+      "signal": "axis1:internal",
+      "_note": "Shared target of A1_D2_HIGH and A1_D2_LOW. parentId null because two parents exist."
+    },
+    {
+      "id": "A1_Q2_EXT",
+      "parentId": null,
+      "type": "question",
+      "text": "Looking back at today's friction — what's one thing that was genuinely within your influence?",
+      "options": ["How I responded to the situation","Who I asked for help","When I chose to stop pushing","Honestly, nothing comes to mind right now"],
+      "target": "A1_D3",
+      "signal": "axis1:external",
+      "_note": "Shared target of A1_D2_HIGH and A1_D2_LOW. parentId null because two parents exist."
+    },
+    {
+      "id": "A1_D3",
+      "parentId": null,
+      "type": "decision",
+      "text": null,
+      "options": [
+        "signal=axis1:internal:A1_R_INT",
+        "signal=axis1:external:A1_R_EXT"
+      ],
+      "target": null,
+      "signal": null,
+      "_note": "Routes on dominant axis1 tally. Shared target of A1_Q2_INT and A1_Q2_EXT."
+    },
+    {
+      "id": "A1_R_INT",
+      "parentId": "A1_D3",
+      "type": "reflection",
+      "text": "You titled today '{A1_OPEN.answer}'. There's something consistent in how you described it — you kept showing up as someone with a hand in what happened. That's not small. Ownership of outcomes, even when they're messy, is the thing that makes growth possible.",
+      "options": [],
+      "target": "BRIDGE_1_2",
+      "signal": null
+    },
+    {
+      "id": "A1_R_EXT",
+      "parentId": "A1_D3",
+      "type": "reflection",
+      "text": "You called today '{A1_OPEN.answer}'. Sometimes that's just accurate — things really do fall apart, and others really do drop the ball. Still: buried in that day was at least one moment where you had a sliver of choice. You may not have seen it then. You're seeing it now. That counts.",
+      "options": [],
+      "target": "BRIDGE_1_2",
+      "signal": null
+    },
+    {
+      "id": "BRIDGE_1_2",
+      "parentId": null,
+      "type": "bridge",
+      "text": "Alright. We've looked at how you moved through today. Now let's look at the direction of your energy — not how you responded, but what you gave.",
+      "options": [],
+      "target": "A2_OPEN",
+      "signal": null,
+      "_note": "Shared target of A1_R_INT and A1_R_EXT."
+    },
+    {
+      "id": "A2_OPEN",
+      "parentId": "BRIDGE_1_2",
+      "type": "question",
+      "text": "Think of a specific moment of interaction today — a meeting, a message, a conversation. Which of these feels most honest?",
+      "options": ["I gave something — effort, attention, or help — without being asked","I did what was expected, no more","I was waiting to be noticed for what I'd already done","I felt the work wasn't being distributed fairly"],
+      "target": "A2_D1",
+      "signal": null
+    },
+    {
+      "id": "A2_D1",
+      "parentId": "A2_OPEN",
+      "type": "decision",
+      "text": null,
+      "options": [
+        "answer=I gave something — effort, attention, or help — without being asked:A2_Q_CONTRIB",
+        "answer=I did what was expected, no more:A2_Q_NEUTRAL",
+        "answer=I was waiting to be noticed for what I'd already done|I felt the work wasn't being distributed fairly:A2_Q_ENTITLE"
+      ],
+      "target": null,
+      "signal": null
+    },
+    {
+      "id": "A2_Q_CONTRIB",
+      "parentId": "A2_D1",
+      "type": "question",
+      "text": "When you gave that effort — what was the pull behind it?",
+      "options": ["The work genuinely needed doing","I saw someone struggling and wanted to help","I wanted to be seen as someone who steps up","It was habit more than a deliberate choice"],
+      "target": "A2_Q2_COMMON",
+      "signal": "axis2:contribution",
+      "_note": "Option C ('wanted to be seen') is contribution behavior with an entitlement motive — an intentional nuance documented in the write-up."
+    },
+    {
+      "id": "A2_Q_NEUTRAL",
+      "parentId": "A2_D1",
+      "type": "question",
+      "text": "Was there a moment today where you could have given more — and chose not to? What held you back?",
+      "options": ["I was genuinely at capacity","It wasn't my responsibility","I didn't think it would be noticed anyway","I'm not sure I saw the moment at the time"],
+      "target": "A2_Q2_COMMON",
+      "signal": null,
+      "_note": "Signal intentionally omitted. 'I was genuinely at capacity' is not entitlement. A2_Q2_COMMON carries signal weight for this path via its answer-based decision routing."
+    },
+    {
+      "id": "A2_Q_ENTITLE",
+      "parentId": "A2_D1",
+      "type": "question",
+      "text": "That feeling of imbalance — did you do anything with it?",
+      "options": ["I raised it directly with someone","I kept it to myself and it stayed with me","I adjusted my own effort in response","I let it go — it wasn't worth the energy"],
+      "target": "A2_Q2_COMMON",
+      "signal": "axis2:entitlement"
+    },
+    {
+      "id": "A2_Q2_COMMON",
+      "parentId": null,
+      "type": "question",
+      "text": "If a colleague described your contribution today to someone else, what would be the most accurate thing they'd say?",
+      "options": ["They helped the team when it wasn't their job","They did solid, reliable work","They seemed focused on their own deliverables","They seemed frustrated about recognition or workload"],
+      "target": "A2_D2",
+      "signal": null,
+      "_note": "Shared convergence for all A2 branches. Primary classification point for the neutral path."
+    },
+    {
+      "id": "A2_D2",
+      "parentId": "A2_Q2_COMMON",
+      "type": "decision",
+      "text": null,
+      "options": [
+        "answer=They helped the team when it wasn't their job|They did solid, reliable work:A2_R_CONTRIB",
+        "answer=They seemed focused on their own deliverables|They seemed frustrated about recognition or workload:A2_R_ENTITLE"
+      ],
+      "target": null,
+      "signal": null
+    },
+    {
+      "id": "A2_R_CONTRIB",
+      "parentId": "A2_D2",
+      "type": "reflection",
+      "text": "What you gave today — whether it was visible or quiet — is what organizational culture is actually made of. Not the org chart, not the all-hands. The small acts of contribution that no one mandated. You showed up that way. That's worth noticing.",
+      "options": [],
+      "target": "BRIDGE_2_3",
+      "signal": null
+    },
+    {
+      "id": "A2_R_ENTITLE",
+      "parentId": "A2_D2",
+      "type": "reflection",
+      "text": "There's nothing wrong with wanting recognition — everyone does. The interesting question is what you do with that want. Does it narrow you, or can it coexist with giving anyway? Today might have had more of the first. Tomorrow is still available.",
+      "options": [],
+      "target": "BRIDGE_2_3",
+      "signal": null
+    },
+    {
+      "id": "BRIDGE_2_3",
+      "parentId": null,
+      "type": "bridge",
+      "text": "Almost done. One last lens. We've looked at how you showed up, and what you gave. Now: who else was in the picture today?",
+      "options": [],
+      "target": "A3_OPEN",
+      "signal": null,
+      "_note": "Shared target of A2_R_CONTRIB and A2_R_ENTITLE."
+    },
+    {
+      "id": "A3_OPEN",
+      "parentId": "BRIDGE_2_3",
+      "type": "question",
+      "text": "When you think about today's biggest challenge, who comes to mind first?",
+      "options": ["Just me — it was mine to carry","My team — we were all in it","A specific colleague who had it harder than I did","The person we're ultimately doing this for — the customer, the student, the end user"],
+      "target": "A3_D1",
+      "signal": null
+    },
+    {
+      "id": "A3_D1",
+      "parentId": "A3_OPEN",
+      "type": "decision",
+      "text": null,
+      "options": [
+        "answer=Just me — it was mine to carry:A3_Q_SELF",
+        "answer=My team — we were all in it:A3_Q_TEAM",
+        "answer=A specific colleague who had it harder than I did|The person we're ultimately doing this for — the customer, the student, the end user:A3_Q_WIDE"
+      ],
+      "target": null,
+      "signal": null
+    },
+    {
+      "id": "A3_Q_SELF",
+      "parentId": "A3_D1",
+      "type": "question",
+      "text": "Was there a moment today where someone else's difficulty was visible to you — even briefly?",
+      "options": ["Yes, and I acknowledged it or helped","Yes, but I was too caught up in my own things","Not really — I was heads-down all day","I noticed, but wasn't sure it was my place to engage"],
+      "target": "A3_D2",
+      "signal": "axis3:self"
+    },
+    {
+      "id": "A3_Q_TEAM",
+      "parentId": "A3_D1",
+      "type": "question",
+      "text": "When you think about the team being 'in it' together — did you act on that, or just feel it?",
+      "options": ["I actively helped or checked in with someone","I felt it but mostly stayed in my lane","I said something that acknowledged the shared difficulty","I was dealing with my own part of it — I trusted others to do the same"],
+      "target": "A3_D2",
+      "signal": "axis3:altrocentric",
+      "_note": "Consolidated from axis3:team to axis3:altrocentric. Team-awareness is other-oriented. Axis3 is now cleanly binary: self vs altrocentric."
+    },
+    {
+      "id": "A3_Q_WIDE",
+      "parentId": "A3_D1",
+      "type": "question",
+      "text": "That wider awareness — of your colleague or the end user — did it change anything about how you worked today?",
+      "options": ["Yes — it gave me a reason to push through something I wanted to quit","Yes — it made me more patient with someone difficult","I felt it, but it didn't change my actions","It came to me only now, reflecting on it"],
+      "target": "A3_D2",
+      "signal": "axis3:altrocentric"
+    },
+    {
+      "id": "A3_D2",
+      "parentId": null,
+      "type": "decision",
+      "text": null,
+      "options": [
+        "signal=axis3:altrocentric:A3_R_WIDE",
+        "signal=axis3:self:A3_R_SELF"
+      ],
+      "target": null,
+      "signal": null,
+      "_note": "Shared target of A3_Q_SELF, A3_Q_TEAM, A3_Q_WIDE. altrocentric checked first (covers team and wide paths)."
+    },
+    {
+      "id": "A3_R_SELF",
+      "parentId": "A3_D2",
+      "type": "reflection",
+      "text": "Today was largely a solo experience for you — that's not a flaw, especially on a hard day. Carrying your own weight is real work. The question for tomorrow: is there one person whose experience you could hold alongside your own? Not to fix it. Just to notice it.",
+      "options": [],
+      "target": "SUMMARY",
+      "signal": null
+    },
+    {
+      "id": "A3_R_WIDE",
+      "parentId": "A3_D2",
+      "type": "reflection",
+      "text": "You thought about someone else today — genuinely, not as a performance. That's the thing Maslow wrote about in his later years: the most resilient people are the ones whose sense of meaning reaches beyond themselves. You found that today. That's a resource, not just a feeling.",
+      "options": [],
+      "target": "SUMMARY",
+      "signal": null
+    },
+    {
+      "id": "SUMMARY",
+      "parentId": null,
+      "type": "summary",
+      "text": "Today you called it '{A1_OPEN.answer}'.\n\nOn agency: you leaned toward {axis1.label}.\nOn contribution: you leaned toward {axis2.label}.\nOn radius: you leaned toward {axis3.label}.\n\n{summary_reflection}\n\nNone of this is a score. It's just a mirror. What you do with it is, as always, up to you.",
+      "options": [],
+      "target": "END",
+      "signal": null,
+      "_note": "Uses axis*.label (human-readable string from axis_labels lookup) not axis*.dominant (raw signal key) to avoid grammatically broken output.",
+      "axis_labels": {
+        "axis1": {"internal": "ownership and agency", "external": "external circumstances"},
+        "axis2": {"contribution": "giving and contribution", "entitlement": "receiving and recognition"},
+        "axis3": {"altrocentric": "others and wider purpose", "self": "your own experience"}
+      },
+      "summary_templates": {
+        "internal_contribution_altrocentric": "You showed up with ownership, gave without keeping score, and kept someone else in mind. That's a complete day — even if the outcomes were imperfect.",
+        "internal_contribution_self": "You were in the driver's seat and gave real effort. Tomorrow: see if the frame can widen slightly — your work affects more people than just you.",
+        "internal_entitlement_altrocentric": "You saw your agency clearly and your awareness reached outward. There's a gap in the contribution layer — worth sitting with. Giving and receiving don't have to be in opposition.",
+        "internal_entitlement_self": "You saw your choices today — that clarity is valuable. The pattern worth examining: is the energy mostly inward? Contribution and wider awareness are the next edges to grow.",
+        "external_contribution_altrocentric": "You gave without being asked and kept others in mind — even on a day when things felt out of your control. That's generosity under pressure. Worth respecting in yourself.",
+        "external_contribution_self": "Today felt like it happened to you, and you still showed up and contributed. That matters. Tomorrow: see if there's one choice — even tiny — you can claim as yours.",
+        "external_entitlement_altrocentric": "A hard day, a narrow feeling about fairness — and yet you still reached outward. That's not nothing. The agency and contribution layers are where the work is next.",
+        "external_entitlement_self": "Today was rough, and it mostly felt like it came from outside and landed on you alone. That's a valid experience. What would shift if, just once tomorrow, you looked for one choice and one person to help?"
+      }
+    },
+    {
+      "id": "END",
+      "parentId": "SUMMARY",
+      "type": "end",
+      "text": "See you tomorrow. Get some rest.",
+      "options": [],
+      "target": null,
+      "signal": null
+    }
+  ]
+}
